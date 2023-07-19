@@ -49,7 +49,7 @@ export function json(obj: Record<string, unknown>) {
   })
 }
 
-export function text(input: unknown) {
+export function text(input: string | number | boolean) {
   return new Response(String(input), {
     status: 200,
     headers: {
