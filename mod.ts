@@ -3,6 +3,7 @@ import { createMatcher, extractParams } from './matcher.ts'
 import { render } from './render.ts'
 import { createExplorer } from './static.ts'
 
+export * from './util.ts'
 export { h, Fragment } from 'https://deno.land/x/jsx@v0.1.5/mod.ts'
 
 type Relay = Record<string, unknown>
@@ -38,33 +39,6 @@ const defaultRoutes: Routes<Relay> = {
     status: 404,
   }),
   [MIDDLEWARE]: () => {},
-}
-
-export function json(obj: Record<string, unknown>) {
-  return new Response(JSON.stringify(obj), {
-    status: 200,
-    headers: {
-      'Content-Type': 'application/json',
-    },
-  })
-}
-
-export function text(input: string | number | boolean) {
-  return new Response(String(input), {
-    status: 200,
-    headers: {
-      'Content-Type': 'text/plain',
-    },
-  })
-}
-
-export function redirect(destination: string, status = 302) {
-  return new Response(null, {
-    status,
-    headers: {
-      Location: destination,
-    },
-  })
 }
 
 export function withLayout<T extends Relay>(Layout: Component<T>, Target: Component<T>) {
