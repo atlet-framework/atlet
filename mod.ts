@@ -24,8 +24,8 @@ export type Props<T extends Relay = Relay> = {
 }
 type RouteResponse = Response | Node<unknown> | Promise<Response> | Promise<Node<unknown>> | void | Promise<void>
 type Route<T extends Relay> = ((input: Props<T>) => RouteResponse) | Component<T>
-type Routes<T extends Relay> = Record<string | symbol, Route<T>>
 type Component<T extends Relay> = (props: Props<T>) => Node<unknown> | Promise<Node<unknown>>
+export type Routes<T extends Relay = Relay> = Record<string | symbol, Route<T>>
 export type Config = {
   static?: string
   unoCSS?: boolean
