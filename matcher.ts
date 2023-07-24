@@ -1,13 +1,12 @@
 import { removeTraillingSlashes } from './util.ts'
 
 type StaticRoute<T> = {
-  static: true,
-  route: string,
+  method: string | null,
+  static: boolean,
+  path: string,
   end: T,
 }
-type DynamicRoute<T> = {
-  static: false,
-  route: string,
+type DynamicRoute<T> = StaticRoute<T> & {
   routeParts: string[],
   end: T,
 }
@@ -18,22 +17,29 @@ function separateRoutes<T>(routes: Record<string | symbol, T>) {
   
   const entries = Object.entries(routes)
 
-  for (const [route, endpoint] of entries) {
-    if (typeof route === 'symbol') {
+  for (let [path, endpoint] of entries) {
+    if (typeof path === 'symbol') {
       continue
     }
 
-    const sanitizedRoute = removeTraillingSlashes(route)
+    let method = null
+
+    if (path.includes(' ')) {
+      [method, path] = path.split(' ')
+    }
+    
+    const sanitizedRoute = removeTraillingSlashes(path)
     
     if (!sanitizedRoute.includes(':')) {
       const idx = staticRoutes.findIndex((r) => {
-        return r.route === route
+        return r.path === path
       })
 
       if (idx === -1) {
         staticRoutes.push({
+          method,
           static: true,
-          route: sanitizedRoute,
+          path: sanitizedRoute,
           end: endpoint,
         })
       }
@@ -42,13 +48,14 @@ function separateRoutes<T>(routes: Record<string | symbol, T>) {
     }
 
     const idx = dynamicRoutes.findIndex((r) => {
-      return r.route === sanitizedRoute
+      return r.path === sanitizedRoute
     })
 
     if (idx === -1) {
       dynamicRoutes.push({
+        method,
         static: false,
-        route: sanitizedRoute,
+        path: sanitizedRoute,
         end: endpoint,
         routeParts: sanitizedRoute.split('/'),
       })
@@ -64,11 +71,11 @@ function separateRoutes<T>(routes: Record<string | symbol, T>) {
 export function createMatcher<T>(routes: Record<string | symbol, T>) {
   const { staticRoutes, dynamicRoutes } = separateRoutes(routes)
 
-  return function match(routeToMatch: string): StaticRoute<T> | DynamicRoute<T> | null {
-    const sanitizedRoute = removeTraillingSlashes(routeToMatch)
+  return function match(method: string, path: string): StaticRoute<T> | DynamicRoute<T> | null {
+    const sanitizedRoute = removeTraillingSlashes(path)
 
     const staticRoute = staticRoutes.find((r) => {
-      return r.route === sanitizedRoute
+      return r.path === sanitizedRoute && (r.method === method || r.method === null)
     })
 
     if (staticRoute) {
@@ -77,6 +84,10 @@ export function createMatcher<T>(routes: Record<string | symbol, T>) {
 
     const sanitizedRouteParts = sanitizedRoute.split('/')
     const dynamicRoute = dynamicRoutes.find((r) => {
+      if (r.method !== method && r.method !== null) {
+        return false
+      }
+
       if (r.routeParts.length !== sanitizedRouteParts.length) {
         return false
       }

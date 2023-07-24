@@ -120,7 +120,7 @@ export async function createHandler<T extends Relay>(routes: Routes<T>, config: 
       return await render(middlewareResult, props, config)
     }
     
-    const route = match(url.pathname)
+    const route = match(request.method, url.pathname)
 
     if (!route) {
       const result = (NOT_FOUND in routes)
@@ -131,7 +131,7 @@ export async function createHandler<T extends Relay>(routes: Routes<T>, config: 
     }
 
     if (!route.static) {
-      props.params = extractParams(url.pathname, route.route)
+      props.params = extractParams(url.pathname, route.path)
     }
 
     const result = await route.end(props)
