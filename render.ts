@@ -1,6 +1,6 @@
 import { Node, h, renderToString } from 'https://deno.land/x/jsx@v0.1.5/mod.ts'
 import * as Uno from './uno.ts'
-import { Config, Props } from './mod.ts'
+import { Config, Props } from './types.ts'
 
 function fuseHeaders(target: Headers, source: Headers) {
   for (const entry of source.entries()) {
