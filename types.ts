@@ -1,4 +1,5 @@
-import { Node, h } from 'https://deno.land/x/jsx@v0.1.5/mod.ts'
+import { Node } from 'https://deno.land/x/jsx@v0.1.5/mod.ts'
+import { UnoGenerator } from 'https://esm.sh/@unocss/core@0.53.4'
 
 export type PageOptions = {
   title: string
@@ -34,5 +35,5 @@ export type Routes<T extends DefaultContext = DefaultContext> = Record<string | 
 
 export type Config = {
   static?: string
-  unoCSS?: boolean
+  unocss?: UnoGenerator
 }

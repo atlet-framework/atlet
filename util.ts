@@ -38,3 +38,9 @@ export function redirect(destination: string, status = 302) {
     },
   })
 }
+
+export function fuseHeaders(target: Headers, source: Headers) {
+  for (const entry of source.entries()) {
+    target.set(entry[0], entry[1])
+  }
+}

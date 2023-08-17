@@ -1,12 +1,6 @@
 import { Node, h, renderToString } from 'https://deno.land/x/jsx@v0.1.5/mod.ts'
-import * as Uno from './uno.ts'
 import { Config, Props } from './types.ts'
-
-function fuseHeaders(target: Headers, source: Headers) {
-  for (const entry of source.entries()) {
-    target.set(entry[0], entry[1])
-  }
-}
+import { fuseHeaders } from './util.ts'
 
 export async function render(result: Response | Node<unknown> | void, originalProps: Props, config: Config) {
   if (!result) {
@@ -19,13 +13,12 @@ export async function render(result: Response | Node<unknown> | void, originalPr
 
   const html = await renderToString(result)
 
-  let unocss = ''
-  if (config.unoCSS) {
-    unocss = await Uno.generate(html)
+  if (config.unocss) {
+    const { css } = await config.unocss.generate(html) 
     originalProps.page.head.push(
       h('style', {
         dangerouslySetInnerHTML: {
-          __html: unocss,
+          __html: css,
         },
       })
     )
@@ -45,6 +38,7 @@ export async function render(result: Response | Node<unknown> | void, originalPr
       ${html}
     </html>
   `
+  
   const response = new Response(web, {
     status: 200,
     headers: {
