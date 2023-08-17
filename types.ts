@@ -19,7 +19,12 @@ export type Props<T extends DefaultContext = DefaultContext> = {
   page: PageOptions
 }
 
-type RouteResponse = Response | Node<unknown> | Promise<Response> | Promise<Node<unknown>> | void | Promise<void>
+type RouteResponse = 
+  | Response 
+  | Node<unknown> 
+  | Promise<Response> 
+  | Promise<Node<unknown>> 
+  | void | Promise<void>
 
 export type Route<T extends DefaultContext> = ((input: Props<T>) => RouteResponse) | Component<T>
 
