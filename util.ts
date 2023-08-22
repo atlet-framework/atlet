@@ -58,7 +58,7 @@ export function fuseHeaders(target: Headers, source: Headers) {
   }
 }
 
-export function createScript<T>(imports: T) {
+export function createScript<T>(imports?: T) {
   return function script(fn: (imports: T) => unknown) {
     return h('script', {
       dangerouslySetInnerHTML: {
