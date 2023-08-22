@@ -1,4 +1,4 @@
-import { Node, renderToString } from 'https://deno.land/x/jsx@v0.1.5/mod.ts'
+import { Node, h, renderToString } from 'https://deno.land/x/jsx@v0.1.5/mod.ts'
 
 export function removeTraillingSlashes(str: string) {
   const arr = Array.from(str)
@@ -55,5 +55,15 @@ export function redirect(destination: string, status = 302) {
 export function fuseHeaders(target: Headers, source: Headers) {
   for (const entry of source.entries()) {
     target.set(entry[0], entry[1])
+  }
+}
+
+export function createScript<T>(imports: T) {
+  return function script(fn: (imports: T) => unknown) {
+    return h('script', {
+      dangerouslySetInnerHTML: {
+        __html: `(${fn.toString()})(${JSON.stringify(imports)});`,
+      },
+    })
   }
 }
