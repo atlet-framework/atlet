@@ -1,3 +1,5 @@
+import { Node, renderToString } from 'https://deno.land/x/jsx@v0.1.5/mod.ts'
+
 export function removeTraillingSlashes(str: string) {
   const arr = Array.from(str)
 
@@ -10,6 +12,17 @@ export function removeTraillingSlashes(str: string) {
   }
 
   return arr.join('')
+}
+
+export function html(node: Node<unknown>) {
+  return renderToString(node).then((htmlContent) => {
+    return new Response(htmlContent, {
+      status: 200,
+      headers: {
+        'Content-Type': 'text/html',
+      },
+    })
+  })
 }
 
 export function json(obj: Record<string, unknown>) {
